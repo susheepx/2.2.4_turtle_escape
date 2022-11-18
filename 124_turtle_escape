@@ -1,0 +1,36 @@
+import turtle as t
+
+#--------initialization----------
+
+t.hideturtle()
+#initialize maze turtle
+maze_turtle = t.Turtle()
+maze_turtle.pensize(4)
+maze_turtle.speed("fastest")
+
+#----------variables----------
+
+#maze configuration variables
+num_walls = 25
+dis_walls = 20
+pen_color = "black"
+
+#----------functions----------
+
+#set up the maze
+def maze_config():
+    maze_turtle.left(90)
+    for i in range(num_walls):
+        maze_turtle.pencolor(pen_color)
+        maze_turtle.forward(dis_walls*(i+1))
+        maze_turtle.left(90)
+    maze_turtle.hideturtle()
+
+#----------main program----------
+
+maze_config()
+
+#keep turtle screen open
+wn = t.Screen()
+wn.mainloop()
+
