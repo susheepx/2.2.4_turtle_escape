@@ -15,16 +15,28 @@ num_walls = 25
 dis_walls = 20
 pen_color = "black"
 
+#door configuration variables
+
+
 #----------functions----------
 
 #set up the maze
 def maze_config():
     maze_turtle.left(90)
+    door_config()
     for i in range(num_walls):
         maze_turtle.pencolor(pen_color)
-        maze_turtle.forward(dis_walls*(i+1))
+        maze_turtle.forward(dis_walls*(i+2))
         maze_turtle.left(90)
     maze_turtle.hideturtle()
+
+#create openings, or doors, in the maze
+def door_config():
+    maze_turtle.forward(10)
+    maze_turtle.penup()
+    maze_turtle.forward(10)
+    maze_turtle.pendown()
+    maze_turtle.left(90)
 
 #----------main program----------
 
