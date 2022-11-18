@@ -1,4 +1,5 @@
 import turtle as t
+import random as r
 
 #--------initialization----------
 
@@ -11,31 +12,56 @@ maze_turtle.speed("fastest")
 #----------variables----------
 
 #maze configuration variables
-num_walls = 25
-dis_walls = 20
+num_walls = 27
+dis_first_wall = 10
 pen_color = "black"
+current_wall_len = 10
 
-#door configuration variables
-
+#door and barriers variables
+door_len = 20
+ran_door = 0
+barrier_len = 20
+ran_barrier = 0
 
 #----------functions----------
 
 #set up the maze
 def maze_config():
-    maze_turtle.left(90)
-    door_config()
+    global current_wall_len
+    global ran_door
+    global ran_barrier
+
     for i in range(num_walls):
-        maze_turtle.pencolor(pen_color)
-        maze_turtle.forward(dis_walls*(i+2))
-        maze_turtle.left(90)
+        if (i > 4):
+            #set up the random barriers and doors
+            current_wall_len = dis_first_wall*(i+1)
+            ran_door = r.randint(0, dis_first_wall*2)
+            ran_barrier = r.randint(dis_first_wall, current_wall_len-(dis_first_wall*4))
+            maze_turtle.pencolor(pen_color)
+
+            door_config()
+            barrier_config()
+            #moves turtle forward minus the space already moved by the door
+            #barrier doesn't matter because it doesn't add to the length of the wall
+            maze_turtle.forward(current_wall_len - ran_door - door_len - ran_barrier)
+
+            maze_turtle.left(90)
     maze_turtle.hideturtle()
 
 #create openings, or doors, in the maze
 def door_config():
-    maze_turtle.forward(10)
+    maze_turtle.forward(ran_door)
     maze_turtle.penup()
-    maze_turtle.forward(10)
+    maze_turtle.forward(door_len)
     maze_turtle.pendown()
+
+#create barriers
+def barrier_config():
+    maze_turtle.forward(ran_barrier)
+    maze_turtle.left(90)
+    maze_turtle.forward(barrier_len)
+    maze_turtle.right(180)
+    maze_turtle.forward(barrier_len)
     maze_turtle.left(90)
 
 #----------main program----------
