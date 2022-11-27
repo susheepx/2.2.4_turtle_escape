@@ -1,5 +1,6 @@
 import turtle as t
 import random as r
+import time as time
 
 #--------initialization----------
 
@@ -7,68 +8,77 @@ t.hideturtle()
 #initialize maze turtle
 maze_turtle = t.Turtle()
 maze_turtle.pensize(4)
-maze_turtle.speed("fastest")
+maze_turtle.speed('fastest')
 
 #----------variables----------
 
 #maze configuration variables
 num_walls = 27
-dis_first_wall = 10
 pen_color = "black"
-current_wall_len = 10
+path_width = 15
+current_wall_len = 0
 
 #door and barriers variables
-door_len = 20
-ran_door = 0
-barrier_len = 20
-ran_barrier = 0
+door_len = path_width*2
+door = 0
+barrier = 0
 
 #----------functions----------
-
 #set up the maze
 def maze_config():
+    maze_turtle.pencolor(pen_color)
+    maze_turtle.right(90)
     global current_wall_len
-    global ran_door
-    global ran_barrier
 
-    for i in range(num_walls):
+    #runs function according to the total number of walls
+    for i in range (num_walls):
+        current_wall_len = path_width*(i+1)
+
+        #only run function if it's not hte first 4 walls because the length of the door and barrier are too long
         if (i > 4):
-            #set up the random barriers and doors
-            current_wall_len = dis_first_wall*(i+1)
-            ran_door = r.randint(0, dis_first_wall*2)
-            ran_barrier = r.randint(dis_first_wall, current_wall_len-(dis_first_wall*4))
-            maze_turtle.pencolor(pen_color)
-
-            door_config()
-            barrier_config()
-            #moves turtle forward minus the space already moved by the door
-            #barrier doesn't matter because it doesn't add to the length of the wall
-            maze_turtle.forward(current_wall_len - ran_door - door_len - ran_barrier)
-
+            door = r.randint(path_width*2, current_wall_len-(path_width*2))
+            barrier = r.randint(path_width*2, current_wall_len-(path_width*2))
             maze_turtle.left(90)
-    maze_turtle.hideturtle()
 
-#create openings, or doors, in the maze
-def door_config():
-    maze_turtle.forward(ran_door)
+            #in case the door and barrier are in the same place, change the cords of the barrier
+            while(abs(door - barrier) < path_width*2):
+                barrier = r.randint(path_width, current_wall_len-(path_width*2))
+
+            #if the door is before the barrier, draw the door first
+            if (door < barrier):
+                draw_door(door)
+                draw_barrier(barrier - door - door_len)
+                #moves turtle forward minus the space already moved by the door and barrier
+                maze_turtle.forward(current_wall_len - barrier)
+
+            #if the door is after the barrier, draw the barrier first
+            else:
+                draw_barrier(barrier)
+                draw_door(door - barrier)
+                #moves turtle forward minus the space already moved by door and barrier
+                maze_turtle.forward(current_wall_len - door - door_len)
+
+#function to draw the door at the given position
+def draw_door(pos):
+    maze_turtle.pendown()
+    maze_turtle.forward(pos)
     maze_turtle.penup()
     maze_turtle.forward(door_len)
     maze_turtle.pendown()
 
-#create barriers
-def barrier_config():
-    maze_turtle.forward(ran_barrier)
+#function to draw the barrier at the given position
+def draw_barrier(pos):
+    maze_turtle.forward(pos)
     maze_turtle.left(90)
-    maze_turtle.forward(barrier_len)
-    maze_turtle.right(180)
-    maze_turtle.forward(barrier_len)
-    maze_turtle.left(90)
+    maze_turtle.forward(path_width*2)
+    maze_turtle.backward(path_width*2)
+    maze_turtle.right(90)
+    
 
-#----------main program----------
-
+#----------main----------
 maze_config()
+
 
 #keep turtle screen open
 wn = t.Screen()
 wn.mainloop()
-
