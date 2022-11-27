@@ -2,20 +2,12 @@ import turtle as t
 import random as r
 import time as time
 
-#--------initialization----------
-
-t.hideturtle()
-#initialize maze turtle
-maze_turtle = t.Turtle()
-maze_turtle.pensize(4)
-maze_turtle.speed('fastest')
-
 #----------variables----------
 
 #maze configuration variables
-num_walls = 27
+num_walls = 22
 pen_color = "black"
-path_width = 15
+path_width = 25
 current_wall_len = 0
 
 #door and barriers variables
@@ -23,10 +15,50 @@ door_len = path_width*2
 door = 0
 barrier = 0
 
+#--------initialization----------
+
+t.hideturtle()
+#initialize maze drawing turtle
+maze_turtle = t.Turtle()
+maze_turtle.pensize(4)
+maze_turtle.speed('fastest')
+maze_turtle.pencolor(pen_color)
+maze_turtle.hideturtle()
+maze_turtle.penup()
+maze_turtle.goto(-path_width*2, - path_width*3)
+
+#initalize maze runner
+maze_runner = t.Turtle()
+maze_runner.shape('turtle')
+maze_runner.speed(3)
+maze_runner.pencolor("green")
+maze_runner.color("green")
+maze_runner.pendown()
+
+
 #----------functions----------
+
+#set maze_runner setheading direction in all 4 directions
+def right():
+    maze_runner.setheading(0)
+def up():
+    maze_runner.setheading(90)
+def left():
+    maze_runner.setheading(180)
+def down():
+    maze_runner.setheading(270)
+def move():
+    maze_runner.forward(10)
+    if(maze_runner.xcor() > 300 or maze_runner.xcor() < -300 or maze_runner.ycor() > 300 or maze_runner.ycor() < -300):
+        maze_runner.write("You Win!", font=("Arial", 30, "normal"))
+        time.sleep(5)
+        exit()
+
+
+
 #set up the maze
 def maze_config():
-    maze_turtle.pencolor(pen_color)
+    maze_turtle.pendown()
     maze_turtle.right(90)
     global current_wall_len
 
@@ -41,7 +73,7 @@ def maze_config():
             maze_turtle.left(90)
 
             #in case the door and barrier are in the same place, change the cords of the barrier
-            while(abs(door - barrier) < path_width*2):
+            if (abs(door - barrier) < path_width*2):
                 barrier = r.randint(path_width, current_wall_len-(path_width*2))
 
             #if the door is before the barrier, draw the door first
@@ -78,7 +110,15 @@ def draw_barrier(pos):
 #----------main----------
 maze_config()
 
-
 #keep turtle screen open
 wn = t.Screen()
+#onkeypress and listen
+
+wn.onkeypress(up, "Up")
+wn.onkeypress(left, "Left")
+wn.onkeypress(right, "Right")
+wn.onkeypress(down, "Down")
+wn.onkeypress(move, "space")   
+wn.listen()
 wn.mainloop()
+
