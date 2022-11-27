@@ -51,8 +51,6 @@ def move():
     maze_runner.forward(10)
     if(maze_runner.xcor() > 300 or maze_runner.xcor() < -300 or maze_runner.ycor() > 300 or maze_runner.ycor() < -300):
         maze_runner.write("You Win!", font=("Arial", 30, "normal"))
-        time.sleep(5)
-        exit()
 
 
 
