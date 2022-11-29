@@ -15,6 +15,9 @@ door_len = path_width*2
 door = 0
 barrier = 0
 
+#maze runner variables
+speed = 30
+
 #--------initialization----------
 
 t.hideturtle()
@@ -48,7 +51,7 @@ def left():
 def down():
     maze_runner.setheading(270)
 def move():
-    maze_runner.forward(10)
+    maze_runner.forward(speed)
     if(maze_runner.xcor() > 300 or maze_runner.xcor() < -300 or maze_runner.ycor() > 300 or maze_runner.ycor() < -300):
         maze_runner.write("You Win!", font=("Arial", 30, "normal"))
 
@@ -64,7 +67,7 @@ def maze_config():
     for i in range (num_walls):
         current_wall_len = path_width*(i+1)
 
-        #only run function if it's not hte first 4 walls because the length of the door and barrier are too long
+        #only run function if it's not the first 4 walls because the length of the door and barrier are too long
         if (i > 4):
             door = r.randint(path_width*2, current_wall_len-(path_width*2))
             barrier = r.randint(path_width*2, current_wall_len-(path_width*2))
@@ -74,8 +77,15 @@ def maze_config():
             if (abs(door - barrier) < path_width*2):
                 barrier = r.randint(path_width, current_wall_len-(path_width*2))
 
+            #if the wall is the last 4 walls of the maze, don't draw the door
+            if (i >= num_walls-4):
+                if (i == num_walls-1):
+                    maze_turtle.forward(current_wall_len)
+                else:
+                    draw_barrier(barrier)
+                    maze_turtle.forward(current_wall_len - barrier)
             #if the door is before the barrier, draw the door first
-            if (door < barrier):
+            elif (door < barrier):
                 draw_door(door)
                 draw_barrier(barrier - door - door_len)
                 #moves turtle forward minus the space already moved by the door and barrier
@@ -88,7 +98,11 @@ def maze_config():
                 #moves turtle forward minus the space already moved by door and barrier
                 maze_turtle.forward(current_wall_len - door - door_len)
 
-#function to draw the door at the given position
+    #draw the buttons for speed control
+    draw_buttons(100, -300, "Speed Up")
+    draw_buttons(-150, -300, "Speed Down")
+
+#function to draw the door at the given position when called
 def draw_door(pos):
     maze_turtle.pendown()
     maze_turtle.forward(pos)
@@ -96,20 +110,56 @@ def draw_door(pos):
     maze_turtle.forward(door_len)
     maze_turtle.pendown()
 
-#function to draw the barrier at the given position
+#function to draw the barrier at the given position when called
 def draw_barrier(pos):
     maze_turtle.forward(pos)
     maze_turtle.left(90)
     maze_turtle.forward(path_width*2)
     maze_turtle.backward(path_width*2)
     maze_turtle.right(90)
-    
+
+#function for increasing and decreasing turtle speed
+def speed_up():
+    global speed
+    speed += 5
+    print(speed)
+def speed_down():
+    global speed
+    speed -= 5
+    print(speed)
+
+#draw the buttons on the bottom of the screen for speed control
+def draw_buttons(x, y, text):
+    maze_turtle.penup()
+    maze_turtle.goto(x, y)
+    maze_turtle.pendown()
+    maze_turtle.setheading(0)
+    for i in range(2):
+        maze_turtle.forward(100)
+        maze_turtle.right(90)
+        maze_turtle.forward(50)
+        maze_turtle.right(90)
+    maze_turtle.penup()
+    maze_turtle.goto(x+50,y-25)
+    maze_turtle.pendown()
+    maze_turtle.write(text, align = "center",font = ('Arial', 12, 'normal'))
+
+def MouseClicked(x, y):
+    print (x, y)
+    if (x > 150 and x < 250 and y > -350 and y < -300):
+        speed_up()
+    elif (x > -150 and x < -50 and y > -350 and y < -300):
+        speed_down()
 
 #----------main----------
 maze_config()
 
 #keep turtle screen open
 wn = t.Screen()
+
+#check if mouse clicked
+wn.onclick(MouseClicked)
+
 #onkeypress and listen
 
 wn.onkeypress(up, "Up")
